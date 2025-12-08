@@ -2,7 +2,7 @@
 
 ## Architecture Diagram
 
-![alt text](Untitled.png)
+![alt text](architecture.png)
 
 ## Application Overview
 
