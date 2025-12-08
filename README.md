@@ -25,63 +25,23 @@ These single-page applications (built on Vue.js) serve as the entry points for d
 
 These containerized services handle specific business domains, written in different languages best suited for their tasks and compatible with my own language skills.
 
-- **product-service (Python):** This service manages the tech product catalog. It retrieves product data from Azure DocumentDB (`productdb`) and serves associated product imagery stored in Azure Blob Storage based on the product id. It also handles the backend for admin product activities like editing, deleting, or adding a new product.
-- **order-service (Node.js):** Handles recommendations based on prior orders & successful order handling. When a shopper places an order, this service creates the order object, sets the initial status, and immediately publishes the order as a message to the Azure Service Bus `orders` queue to trigger downstream processing asynchronously.
-- **makeline-service (Go):** This service acts as the fulfillment processor. It listens to the `orders` queue. When it receives a new order message, it automatically processes the order creation, updates the status in the `orderdb`, stores it in Azure DocumentDB `orderdb'`. It also handles the backend for admin post-processing order activities like deleting an item (such as an extra Nintendo Switch), shipping, or cancelling an order pre-shipment.
-- **shipping-service (Go):** Manages the final stage of the order lifecycle at this stage in the project. It consumes messages from the `shipping` queue to finalize delivery details and updates the `orderdb` with tracking and completion status. In the future, additional services that handle the logistics process could subscribe to the shipping queue.
+- **product-service (Python):** This service manages the tech product catalog. It retrieves product data from Azure DocumentDB (`productdb`) and serves associated product imagery stored in Azure Blob Storage based on the product `id`. It also handles the backend for admin product activities like editing, deleting, or adding a new product.
+- **order-service (Node.js):** Handles recommendations based on prior orders & successful order initiating. When a shopper places an order, this service creates the order object, sets the initial status, and immediately publishes the order as a message to the Azure Service Bus `orders` queue to trigger downstream processing asynchronously.
+- **makeline-service (Go):** This service acts as the fulfillment processor. It listens to the `orders` queue. When it receives a new order message, it automatically processes the order creation, updates the status in the `orderdb`, and stores it in Azure DocumentDB `orderdb'`. It also handles the backend for admin post-processing order activities like deleting an item from an order, shipping, or cancelling an order pre-shipment.
+- **shipping-service (Go):** Manages the final stage of the order lifecycle at this stage in the project. When an order is shipped by an admin through makeline-service, the `shipping-service` publishes a message to the `shipping` queue in ASB.
+  - Currently, the system mocks listening for messages from the `shipping` queue and the shipment delivery with a timer-based simulation. In the future, additional services that handle the logistics process could subscribe to the shipping queue with real functionality.
 
 #### Managed Backing Services (Azure)
 
 I leverage managed Azure PaaS offerings to handle data storage and messaging infrastructure, reducing the operational overhead compared to owned backing services like RabbitMQ and MongoDB.
 
-- **Azure Blob Storage:** Used as an object store for unstructured data, specifically holding high-resolution product images served by the product-service.
+- **Azure Blob Storage:** Used as an object store for unstructured data, specifically holding product images served by the product-service.
 - **Azure DocumentDB (Cosmos DB):** A vCore-based Azure Cosmos DB for MongoDB.
     - **`productdb`:** Stores static catalog information (names, descriptions, prices, brand, etc).
     - **`orderdb`:** Stores order data, encompassing transactional info and status history of customer orders from placement to delivery.
-- **Azure Service Bus:** Provides reliable, asynchronous enterprise messaging to decouple microservices communications.
+- **Azure Service Bus:** Provides reliable, asynchronous messaging to decouple microservices communications between order-service, makeline-service, and shipping-service
     - **`orders` queue:** Buffers incoming customer orders from the web front-end before processing.
     - **`shipping` queue:** Buffers processed orders ready for logistics and delivery.
-
-## Setup (Docker-Compose)
-
-### Prerequisites
-
-1. Linux: Install Docker
-2. Windows: Install WSL & download Docker Desktop
-
-### Configure
-
-1. Deploy a cost-effective instance of:
-   1. Azure Service Bus
-   2. Azure Storage Account
-   3. Azure DocumentDB (MongoDB compatible)
-2. In Service Bus Namespace, create two queues:
-   1. **orders**
-   2. **shipping**
-3. Find the connection strings/URIs for each of the services:
-   1. Azure Service Bus: **Settings -> Shared access policies -> RootManageSharedAccessKey -> Primary connection string**
-   2. Azure Storage Account: **Security + networking -> Access keys -> Connection string (for any key)**
-   3. Azure DocumentDB: **Settings -> Connection strings -> Global read-write connection string**
-4. Configure the `docker-compose.yml` under `/deployment_files` with those connection strings:
-   1. Azure Service Bus: `ASB_CONNECTION_STRING`
-   2. Azure Storage Account: `BLOB_CONNECTION_STRING`
-   3. Azure DocumentDB: `MONGO_URI`
-
-### Run
-
-1. Run the following:
-    ```bash
-    cd deployment_files
-    docker-compose pull && docker-compose up -d
-    ```
-
-2. Navigate to the frontends:
-    ```bash
-    // store-front
-    http://localhost:8080/
-    // store-admin
-    http://localhost:8081/
-    ```
 
 ## Setup (AKS)
 
@@ -91,15 +51,35 @@ I leverage managed Azure PaaS offerings to handle data storage and messaging inf
    1. Azure Service Bus
    2. Azure Storage Account
    3. Azure DocumentDB (MongoDB compatible)
-2. Deploy AKS with the provided templates in `/deployment_files/aks_templates`
-   1. You may have to adjust the regions depending on your restrictions
-   2. **Overview -> Connect -> Run** the two provided command line scripts to set the cluster namespace for kubectl
+2. Spin up the K8s cluster: 
+   1. (AKS) Deploy AKS with the provided templates in `/deployment_files/aks_templates`:
+      1. You may have to adjust the regions depending on your restrictions
+      2. **Overview -> Connect -> Run** the two provided command line scripts to set the cluster namespace for kubectl
+   2. (Docker Desktop) Configure the `docker-desktop` cluster on Windows:
+      1. Run Docker Desktop app to start the engine. Ensure K8s is enabled in settings.
+      2. Check for the contexts:
+         ```bash
+         kubectl config get-contexts
+         ```
+      3. If `docker-desktop` is visible, switch to it:
+         ```bash
+         kubectl config use-context docker-desktop
+         ```
+      4. If not, the config may be saved in the C: drive on Windows. Run one of the two commands below to resolve this:
+         ```bash
+         // overwrite linux config with windows ones, and rerun step 3
+         cp /mnt/c/Users/<YOUR_USERNAME>/.kube/config ~/.kube/config
+
+         // points to the windows config, and rerun step 3
+         echo "export KUBECONFIG=/mnt/c/Users/<YOUR_USERNAME>/.kube/config" >> ~/.bashrc
+         source ~/.bashrc
+         ```
 3. In Service Bus Namespace, create two queues:
    1. **orders**
    2. **shipping**
 4. In Storage Account, do the following:
    1. Create a container `product-images`
-   2. Upload the images in `/deployment_files/images` there
+   2. Upload the images in `/deployment_files/images` in that container; these correspond to the product data that will be seeded into the DocumentDB `productdb`.
 5. Find the connection strings/URIs for each of the services:
    1. Azure Service Bus: **Settings -> Shared access policies -> RootManageSharedAccessKey -> Primary connection string**
    2. Azure Storage Account: **Security + networking -> Access keys -> Connection string (for any key)**
@@ -117,7 +97,7 @@ I leverage managed Azure PaaS offerings to handle data storage and messaging inf
     kubectl apply -f secrets.yaml
     kubectl apply -f best-buy.yaml
     ```
-2. Wait for the pods to spin up; check:
+2. Wait for the pods to spin up; check for all statuses being 1/1 Running:
     ```bash
     kubectl get pods
     ```
