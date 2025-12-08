@@ -43,7 +43,7 @@ I leverage managed Azure PaaS offerings to handle data storage and messaging inf
     - **`orders` queue:** Buffers incoming customer orders from the web front-end before processing.
     - **`shipping` queue:** Buffers processed orders ready for logistics and delivery.
 
-## Setup (AKS)
+## Setup
 
 ### Configure
 
