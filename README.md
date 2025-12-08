@@ -97,11 +97,14 @@ I leverage managed Azure PaaS offerings to handle data storage and messaging inf
 3. In Service Bus Namespace, create two queues:
    1. **orders**
    2. **shipping**
-4. Find the connection strings/URIs for each of the services:
+4. In Storage Account, do the following:
+   1. Create a container `product-images`
+   2. Upload the images in `/deployment_files/images` there
+5. Find the connection strings/URIs for each of the services:
    1. Azure Service Bus: **Settings -> Shared access policies -> RootManageSharedAccessKey -> Primary connection string**
    2. Azure Storage Account: **Security + networking -> Access keys -> Connection string (for any key)**
    3. Azure DocumentDB: **Settings -> Connection strings -> Global read-write connection string**
-5. Configure the `secrets.yaml` under `/deployment_files` with those connection strings:
+6. Configure the `secrets.yaml` under `/deployment_files` with those connection strings:
    1. Azure Service Bus: `ASB_CONNECTION_STRING`
    2. Azure Storage Account: `BLOB_CONNECTION_STRING`
    3. Azure DocumentDB: `MONGO_URI`
@@ -118,7 +121,7 @@ I leverage managed Azure PaaS offerings to handle data storage and messaging inf
     ```bash
     kubectl get pods
     ```
-3. Navigate to the frontends through the AKS portal: **Kubernetes resources -> Services & Ingresses -> External IPs**
+3. Navigate to the frontends through the AKS portal: **Kubernetes resources -> Services & Ingresses -> External IPs** OR:
     ```bash
     kubectl get services
     ```
@@ -149,4 +152,4 @@ I leverage managed Azure PaaS offerings to handle data storage and messaging inf
 
 ## Video Demo
 
-Youtube link: [Youtube]()
+Youtube link: https://youtu.be/fzveFWe2mbE
