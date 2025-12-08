@@ -23,7 +23,7 @@ These single-page applications (built on Vue.js) serve as the entry points for d
 
 #### Backend Services
 
-These containerized services handle specific business domains, written in different languages best suited for their tasks and compatible with my own language skills.
+These containerized services handle specific business domains, written in different languages best suited for their tasks and compatible with the dev team's skills.
 
 - **product-service (Python):** This service manages the tech product catalog. It retrieves product data from Azure DocumentDB (`productdb`) and serves associated product imagery stored in Azure Blob Storage based on the product `id`. It also handles the backend for admin product activities like editing, deleting, or adding a new product.
 - **order-service (Node.js):** Handles recommendations based on prior orders & successful order initiating. When a shopper places an order, this service creates the order object, sets the initial status, and immediately publishes the order as a message to the Azure Service Bus `orders` queue to trigger downstream processing asynchronously.
