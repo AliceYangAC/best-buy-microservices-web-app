@@ -1,0 +1,116 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "apiVersion": {
+            "value": "2025-05-01"
+        },
+        "resourceName": {
+            "value": "best-buy-aks-cluster"
+        },
+        "location": {
+            "value": "canadacentral"
+        },
+        "dnsPrefix": {
+            "value": "best-buy-aks-cluster-dns"
+        },
+        "kubernetesVersion": {
+            "value": "1.32.9"
+        },
+        "networkPlugin": {
+            "value": "azure"
+        },
+        "enableRBAC": {
+            "value": true
+        },
+        "nodeResourceGroup": {
+            "value": "best-buy-aks-cluster-nodes-rg"
+        },
+        "clusterSku": {
+            "value": {
+                "name": "Base",
+                "tier": "Free"
+            }
+        },
+        "upgradeChannel": {
+            "value": "none"
+        },
+        "clusterIdentity": {
+            "value": {
+                "type": "SystemAssigned"
+            }
+        },
+        "adminGroupObjectIDs": {
+            "value": []
+        },
+        "disableLocalAccounts": {
+            "value": false
+        },
+        "azureRbac": {
+            "value": false
+        },
+        "enableOmsAgent": {
+            "value": false
+        },
+        "isAvailabilityZoneEnabled": {
+            "value": true
+        },
+        "supportPlan": {
+            "value": "KubernetesOfficial"
+        },
+        "nodeOSUpgradeChannel": {
+            "value": "None"
+        },
+        "isPrivateClusterSupported": {
+            "value": true
+        },
+        "enablePrivateCluster": {
+            "value": false
+        },
+        "networkPluginMode": {
+            "value": "overlay"
+        },
+        "networkDataplane": {
+            "value": "azure"
+        },
+        "isAzurePolicySupported": {
+            "value": true
+        },
+        "enableAzurePolicy": {
+            "value": false
+        },
+        "nodeAutoProvisioningMode": {
+            "value": "Manual"
+        },
+        "isSecretStoreCSIDDriverSupported": {
+            "value": true
+        },
+        "enableSecretStoreCSIDriver": {
+            "value": false
+        },
+        "vmssNodePool": {
+            "value": true
+        },
+        "isImageCleanerEnabled": {
+            "value": true
+        },
+        "imageCleanerIntervalHours": {
+            "value": 168
+        },
+        "enableOIDC": {
+            "value": true
+        },
+        "issuerURL": {
+            "value": ""
+        },
+        "enableWorkloadIdentity": {
+            "value": true
+        },
+        "clusterTags": {
+            "value": {}
+        },
+        "tagsForAllResources": {
+            "value": {}
+        }
+    }
+}
