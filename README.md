@@ -27,7 +27,7 @@ These containerized services handle specific business domains, written in differ
 
 - **product-service (Python):** This service manages the product catalog. It retrieves product metadata from Azure DocumentDB (`productdb`) and serves associated product imagery stored in Azure Blob Storage based on the product id.
 - **order-service (Node.js):** Handles recommendations based on prior orders & successful order handling. When a shopper places an order, this service creates the order object, sets the initial status, and immediately publishes the order as a message to the Azure Service Bus `orders` queue to trigger downstream processing.
-- **makeline-service (Go):** This service acts as the fulfillment processor. It listens to the `orders` queue. When it receives a new order message, it automatically processes the order creation, updates the status in the `orderdb`, stores it in Azure DocumentDB `orderdb'`, and publishes a subsequent message to the `shipping` queue indicating the order is ready to be shipped.
+- **makeline-service (Go):** This service acts as the fulfillment processor. It listens to the `orders` queue. When it receives a new order message, it automatically processes the order creation, updates the status in the `orderdb`, stores it in Azure DocumentDB `orderdb'`.
 - **shipping-service (Go):** Manages the final stage of the order lifecycle at this stage in the project. It consumes messages from the `shipping` queue to finalize delivery details and updates the `orderdb` with tracking and completion status. In the future, additional services that handle the logistics process could subscribe to the shipping queue.
 
 #### Managed Backing Services (Azure)
