@@ -59,9 +59,9 @@ I leverage managed Azure PaaS offerings to handle data storage and messaging inf
    1. **orders**
    2. **shipping**
 3. Find the connection strings/URIs for each of the services:
-   1. Azure Service Bus: Settings -> Shared access policies -> RootManageSharedAccessKey -> Primary connection string
-   2. Azure Storage Account: Security + networking -> Access keys -> Connection string (for any key)
-   3. Azure DocumentDB: Settings -> Connection strings -> Global read-write connection string
+   1. Azure Service Bus: **Settings -> Shared access policies -> RootManageSharedAccessKey -> Primary connection string**
+   2. Azure Storage Account: **Security + networking -> Access keys -> Connection string (for any key)**
+   3. Azure DocumentDB: **Settings -> Connection strings -> Global read-write connection string**
 4. Configure the `docker-compose.yml` under `/deployment_files` with those connection strings:
    1. Azure Service Bus: `ASB_CONNECTION_STRING`
    2. Azure Storage Account: `BLOB_CONNECTION_STRING`
@@ -71,7 +71,7 @@ I leverage managed Azure PaaS offerings to handle data storage and messaging inf
 
 1. Run the following:
     ```bash
-    cd /deployment_files
+    cd deployment_files
     docker-compose pull && docker-compose up -d
     ```
 
@@ -84,6 +84,44 @@ I leverage managed Azure PaaS offerings to handle data storage and messaging inf
     ```
 
 ## Setup (AKS)
+
+### Configure
+
+1. Deploy a cost-effective instance of:
+   1. Azure Service Bus
+   2. Azure Storage Account
+   3. Azure DocumentDB (MongoDB compatible)
+2. Deploy AKS with the provided templates in `/deployment_files/aks_templates`
+   1. You may have to adjust the regions depending on your restrictions
+   2. **Overview -> Connect -> Run** the two provided command line scripts to set the cluster namespace for kubectl
+3. In Service Bus Namespace, create two queues:
+   1. **orders**
+   2. **shipping**
+4. Find the connection strings/URIs for each of the services:
+   1. Azure Service Bus: **Settings -> Shared access policies -> RootManageSharedAccessKey -> Primary connection string**
+   2. Azure Storage Account: **Security + networking -> Access keys -> Connection string (for any key)**
+   3. Azure DocumentDB: **Settings -> Connection strings -> Global read-write connection string**
+5. Configure the `secrets.yaml` under `/deployment_files` with those connection strings:
+   1. Azure Service Bus: `ASB_CONNECTION_STRING`
+   2. Azure Storage Account: `BLOB_CONNECTION_STRING`
+   3. Azure DocumentDB: `MONGO_URI`
+
+### Run
+
+1. Run the following:
+    ```bash
+    cd deployment_files
+    kubectl apply -f secrets.yaml
+    kubectl apply -f best-buy.yaml
+    ```
+2. Wait for the pods to spin up; check:
+    ```bash
+    kubectl get pods
+    ```
+3. Navigate to the frontends through the AKS portal: **Kubernetes resources -> Services & Ingresses -> External IPs**
+    ```bash
+    kubectl get services
+    ```
 
 ## Links
 
