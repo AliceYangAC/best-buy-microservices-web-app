@@ -6,9 +6,9 @@
 
 ## Application Overview
 
-This project is a AKS-orchestrated, containerized microservices-based e-commerce application simulating a Best Buy storefront and admin operations.
+This project is an Azure-based, AKS-orchestrated, containerized microservices-based e-commerce application simulating a Best Buy storefront and admin operations.
 
-The application is built using a polyglot microservices architecture designed for cloud-native deployment. The entire system is containerized using Docker, with images hosted on Docker Hub, and orchestrated in production using Azure Kubernetes Service (AKS).
+The application is built using a polyglot microservices architecture designed for cloud-native deployment. The entire system is containerized using Docker, with images hosted on Docker Hub, and orchestrated in production by deploying Azure Kubernetes Service (AKS) using ARM or Terraform IaC templates.
 
 The system is divided into two interactive areas: customer-facing storefront and the employee administrative portal. The architecture also prioritizes event-driven design for order fulfillment. Instead of tightly coupling the ordering process, services communicate asynchronously via Azure Service Bus queues to ensure scalability and resilience for future development.
 
