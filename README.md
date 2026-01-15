@@ -52,10 +52,19 @@ I leverage managed Azure PaaS offerings to handle data storage and messaging inf
    2. Azure Storage Account
    3. Azure DocumentDB (MongoDB compatible)
 2. Spin up the K8s cluster: 
-   1. (AKS) Deploy AKS with the provided templates in `/deployment_files/aks_templates`:
-      1. You may have to adjust the regions depending on your restrictions
-      2. **Overview -> Connect -> Run** the two provided command line scripts to set the cluster namespace for kubectl
-   2. (Docker Desktop) Configure the `docker-desktop` cluster on Windows:
+   1. (Cloud/Azure) Deploy AKS by IaC
+      1. (ARM) `/deployment_files/ARM_templates`:
+         1. Search `Deploy by custom template` in the Azure Portal, and deploy the AKS cluster with the `template.json` and `parameters.json`. 
+         2. When completed deployment, navigate to the AKS cluster in Azure Portal `best-buy-aks-cluster`. **Overview -> Connect -> Run** the two provided command line scripts to set the cluster namespace for kubectl
+      2. (Terraform) `/deployment_files/terraform`:
+         1. Make sure to follow instructions for setting up Terraform for Azure here: [Terraform for Azure](https://developer.hashicorp.com/terraform/tutorials/azure-get-started/install-cli)
+         2. Within `/deployment_files/terraform`, run and approve all prompts:
+         ```bash
+         terraform init
+         terraform apply
+         ```
+         3. When completed deployment, navigate to the AKS cluster in Azure Portal `best-buy-aks-cluster`. **Overview -> Connect -> Run** the two provided command line scripts to set the cluster namespace for kubectl
+   2. (Local) Configure the `docker-desktop` cluster on Windows:
       1. Run Docker Desktop app to start the engine. Ensure K8s is enabled in settings.
       2. Check for the contexts:
          ```bash
