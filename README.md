@@ -49,12 +49,13 @@ I leverage managed Azure PaaS offerings to handle data storage and messaging inf
 
  1. Make sure to follow instructions for setting up Terraform for Azure here: [Terraform for Azure](https://developer.hashicorp.com/terraform/tutorials/azure-get-started/install-cli)
  2. Within `/deployment_files/terraform`, run and approve all prompts:
- ```bash
- terraform init
- terraform plan # if you want to view everything to be deployed beforehand
- terraform apply
- ```
- This deploys Service Bus, Storage Account, DocumentDB, and applies all the connection strings to kubernetes secrets. It also creates the needed queues and uploads the default product images.
+    ```bash
+    terraform init
+    terraform plan # if you want to view everything to be deployed beforehand
+    terraform apply
+    ```
+    This deploys Service Bus, Storage Account, DocumentDB, and applies all the connection strings to kubernetes secrets. It also creates the needed queues and uploads the default product images.
+ 
  3. When completed deployment, navigate to the AKS cluster in Azure Portal `best-buy-aks-cluster`. **Overview -> Connect -> Run** the two provided command line scripts to set the cluster namespace for kubectl
 
 ### Run
@@ -73,6 +74,12 @@ I leverage managed Azure PaaS offerings to handle data storage and messaging inf
     ```bash
     kubectl get services
     ```
+### Cleanup
+
+1. Run the following:
+   ```bash
+   terraform destroy
+   ```
 
 ## Links
 
