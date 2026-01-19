@@ -32,11 +32,11 @@ resource "azurerm_kubernetes_cluster" "aks" {
   node_resource_group = var.node_resource_group
   private_cluster_enabled = var.enable_private_cluster
 
-  kube_admin_config {
-    client_certificate     = true
-    client_key             = true
-    cluster_ca_certificate = true
-  }
+  # kube_admin_config {
+  #   client_certificate     = true
+  #   client_key             = true
+  #   cluster_ca_certificate = true
+  # }
 
   identity {
     type = "SystemAssigned"
@@ -80,9 +80,9 @@ provider "kubernetes" {
   client_key             = base64decode(azurerm_kubernetes_cluster.aks.kube_admin_config[0].client_key)
   cluster_ca_certificate = base64decode(azurerm_kubernetes_cluster.aks.kube_admin_config[0].cluster_ca_certificate)
 
-  depends_on = [
-    azurerm_kubernetes_cluster.aks
-  ]
+  # depends_on = [
+  #   azurerm_kubernetes_cluster.aks
+  # ]
 }
 
 resource "azurerm_kubernetes_cluster_node_pool" "workers" {
@@ -96,7 +96,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "workers" {
 }
 
 resource "azurerm_servicebus_namespace" "sb" {
-  name                = "${var.resource_name}-sb"
+  name                = "${var.resource_name}-bus"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   sku                 = "Basic"
@@ -138,7 +138,7 @@ resource "azurerm_storage_blob" "product_images" {
   storage_account_name   = azurerm_storage_account.sa.name
   storage_container_name = azurerm_storage_container.product_images.name
   type                   = "Block"
-  source                 = "${path.module}/deployment_files/images/${each.value}"
+  source                 = "${path.module}/images/${each.value}"
 }
 
 resource "azurerm_cosmosdb_account" "cosmos" {
@@ -169,12 +169,12 @@ resource "azurerm_cosmosdb_mongo_database" "productdb" {
 }
 
 resource "kubernetes_secret" "best-buy-secrets" {
-  depends_on = [
-    azurerm_kubernetes_cluster.aks,
-    azurerm_servicebus_namespace.sb,
-    azurerm_storage_account.sa,
-    azurerm_cosmosdb_account.cosmos
-  ]
+  # depends_on = [
+  #   azurerm_kubernetes_cluster.aks,
+  #   azurerm_servicebus_namespace.sb,
+  #   azurerm_storage_account.sa,
+  #   azurerm_cosmosdb_account.cosmos
+  # ]
 
   metadata {
     name      = "best-buy-secrets"
