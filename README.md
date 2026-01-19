@@ -45,58 +45,17 @@ I leverage managed Azure PaaS offerings to handle data storage and messaging inf
 
 ## Setup
 
-### Configure
+### Configure: Deploy Azure Services by IaC (Terraform)
 
-1. Deploy a cost-effective instance of:
-   1. Azure Service Bus
-   2. Azure Storage Account
-   3. Azure DocumentDB (MongoDB compatible)
-2. Spin up the K8s cluster: 
-   1. (Cloud/Azure) Deploy AKS by IaC
-      1. (ARM) `/deployment_files/ARM_templates`:
-         1. Search `Deploy by custom template` in the Azure Portal, and deploy the AKS cluster with the `template.json` and `parameters.json`. 
-         2. When completed deployment, navigate to the AKS cluster in Azure Portal `best-buy-aks-cluster`. **Overview -> Connect -> Run** the two provided command line scripts to set the cluster namespace for kubectl
-      2. (Terraform) `/deployment_files/terraform`:
-         1. Make sure to follow instructions for setting up Terraform for Azure here: [Terraform for Azure](https://developer.hashicorp.com/terraform/tutorials/azure-get-started/install-cli)
-         2. Within `/deployment_files/terraform`, run and approve all prompts:
-         ```bash
-         terraform init
-         terraform apply
-         ```
-         3. When completed deployment, navigate to the AKS cluster in Azure Portal `best-buy-aks-cluster`. **Overview -> Connect -> Run** the two provided command line scripts to set the cluster namespace for kubectl
-   2. (Local) Configure the `docker-desktop` cluster on Windows:
-      1. Run Docker Desktop app to start the engine. Ensure K8s is enabled in settings.
-      2. Check for the contexts:
-         ```bash
-         kubectl config get-contexts
-         ```
-      3. If `docker-desktop` is visible, switch to it:
-         ```bash
-         kubectl config use-context docker-desktop
-         ```
-      4. If not, the config may be saved in the C: drive on Windows. Run one of the two commands below to resolve this:
-         ```bash
-         // overwrite linux config with windows ones, and rerun step 3
-         cp /mnt/c/Users/<YOUR_USERNAME>/.kube/config ~/.kube/config
-
-         // points to the windows config, and rerun step 3
-         echo "export KUBECONFIG=/mnt/c/Users/<YOUR_USERNAME>/.kube/config" >> ~/.bashrc
-         source ~/.bashrc
-         ```
-3. In Service Bus Namespace, create two queues:
-   1. **orders**
-   2. **shipping**
-4. In Storage Account, do the following:
-   1. Create a container `product-images`
-   2. Upload the images in `/deployment_files/images` in that container; these correspond to the product data that will be seeded into the DocumentDB `productdb`.
-5. Find the connection strings/URIs for each of the services:
-   1. Azure Service Bus: **Settings -> Shared access policies -> RootManageSharedAccessKey -> Primary connection string**
-   2. Azure Storage Account: **Security + networking -> Access keys -> Connection string (for any key)**
-   3. Azure DocumentDB: **Settings -> Connection strings -> Global read-write connection string**
-6. Configure the `secrets.yaml` under `/deployment_files` with those connection strings:
-   1. Azure Service Bus: `ASB_CONNECTION_STRING`
-   2. Azure Storage Account: `BLOB_CONNECTION_STRING`
-   3. Azure DocumentDB: `MONGO_URI`
+ 1. Make sure to follow instructions for setting up Terraform for Azure here: [Terraform for Azure](https://developer.hashicorp.com/terraform/tutorials/azure-get-started/install-cli)
+ 2. Within `/deployment_files/terraform`, run and approve all prompts:
+ ```bash
+ terraform init
+ terraform plan # if you want to view everything to be deployed beforehand
+ terraform apply
+ ```
+ This deploys Service Bus, Storage Account, DocumentDB, and applies all the connection strings to kubernetes secrets. It also creates the needed queues and uploads the default product images.
+ 3. When completed deployment, navigate to the AKS cluster in Azure Portal `best-buy-aks-cluster`. **Overview -> Connect -> Run** the two provided command line scripts to set the cluster namespace for kubectl
 
 ### Run
 

@@ -92,3 +92,14 @@ variable "tags" {
   type    = map(string)
   default = {}
 }
+
+variable "enable_cosmos_free_tier" {
+  type    = bool
+  default = true
+}
+
+variable "storage_account_name" {
+  type    = string
+  default = "bestbuystorageacct"
+}
+
